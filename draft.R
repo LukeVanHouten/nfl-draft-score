@@ -1,6 +1,6 @@
 library(tidyverse)
 
-draft_df <- read.csv("2022-2024-draft.csv")
+draft_df <- read.csv("draft.csv")
 
 log_bias <- exp(1) - 1
 
@@ -8,8 +8,7 @@ draft_scores <- function(years, num_teams, transformation) {
     draft_picks <- draft_df %>%
         select(paste0("X", as.character(years))) %>%
         mutate(pick = rownames(.)) %>%
-        pivot_longer(cols = colnames(select(., -pick)), 
-                     names_to = "year") %>%
+        pivot_longer(cols = colnames(select(., -pick)), names_to = "year") %>%
         group_by(value, year) %>%
         summarize(pick = list(pick)) %>%
         pivot_wider(names_from = year, values_from = pick) %>%

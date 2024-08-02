@@ -1,4 +1,5 @@
 library(tidyverse)
+library(stringdist)
 
 draft_df <- read.csv("drafts.csv")
 
@@ -80,6 +81,7 @@ draft_scores <- function(years, top_teams, transformation) {
                            year_range, " ", draft), x = "School", y = "Score") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1), 
               legend.position = "none")
+    # return(scores_df)
     return(p)
 }
 

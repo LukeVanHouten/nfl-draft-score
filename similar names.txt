@@ -1,0 +1,11 @@
+filtered_results <- Filter(function(x) length(x) >= 2, 
+                           lapply(rownames(scores), agrep, rownames(scores), 
+                                  max.distance = 0.05, value = TRUE))
+similar_names <- as.data.frame(do.call(rbind, 
+                                       lapply(filtered_results, 
+                                              function(y, length) {
+                                                  c(y, rep(NA, length -
+                                                           length(y)))}, 
+                                       length = max(sapply(filtered_results, 
+                                                           length)))), 
+                                stringsAsFactors = FALSE)

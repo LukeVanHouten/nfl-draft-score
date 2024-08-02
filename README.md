@@ -8,7 +8,7 @@ Warning: Any duplicate college names were fixed manually in Excel in the drafts.
  - West. Illinois/Western Illinois
  - East. Illinois/Eastern Illinois
  - SE Missouri St./Southeast Missouri St.
- - Nw Missouri St./Northwest Missouri St.
+ - NW Missouri St./Northwest Missouri St.
  - Boston Col./Boston College
  - East. Kentucky/Eastern Kentucky
  - Md-Eastern Shore/MD-Eastern Shore

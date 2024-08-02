@@ -16,3 +16,6 @@ Warning: Any duplicate college names were fixed manually in Excel in the drafts.
  - Lenoir Rhyne/Lenoir-Rhyne
  - S.F. Austin/Stephen F. Austin
  - Angelo St./Angelo State (TX)
+
+The code to find more similar schools is in `similar names.txt`, but the only problematic ones are the ones listed above.
+

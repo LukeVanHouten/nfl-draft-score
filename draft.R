@@ -1,5 +1,4 @@
 library(tidyverse)
-library(stringdist)
 
 draft_df <- read.csv("drafts.csv")
 

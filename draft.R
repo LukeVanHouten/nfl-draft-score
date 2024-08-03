@@ -48,7 +48,7 @@ draft_scores <- function(years, top_teams, transformation) {
     }
     
     score_df <- as.data.frame(sort(apply(pivot_df, 2, tukey), 
-                                    decreasing = TRUE))
+                                   decreasing = TRUE))
     colnames(score_df) <- "score"
     scores_df <- subset(score_df, !(rownames(score_df) %in% "Unknown"))
     
@@ -71,7 +71,7 @@ draft_scores <- function(years, top_teams, transformation) {
     }
     
     p <- ggplot(data = scores_df, 
-           aes(x = reorder(rownames(scores_df), -score), y = score)) +
+                aes(x = reorder(rownames(scores_df), -score), y = score)) +
         geom_col(fill = "purple", color = "gold") +
         geom_text(aes(label = round(score, 4)), color = "gold",
                   position = position_dodge(width = 0.9), angle = 90, 
@@ -81,10 +81,11 @@ draft_scores <- function(years, top_teams, transformation) {
                            year_range, " ", draft), x = "School", y = "Score") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1), 
               legend.position = "none")
-    # return(scores_df)
     return(p)
 }
 
 scores <- draft_scores(years = "all", top_teams = 50, 
                        transformation = "log")
 scores
+
+scores_df <- scores$plot_env$scores_df

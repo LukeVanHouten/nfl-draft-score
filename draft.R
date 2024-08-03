@@ -76,7 +76,7 @@ draft_scores <- function(years, top_teams, transformation) {
                   position = position_dodge(width = 0.9), angle = 90, 
                   hjust = 1.2, vjust = 0.5) +
         labs(title = paste0(top_teams, " ", str_to_title(transformation), 
-                           "-Transformed College Draft Scores in the", " ",
+                           "-Transformed College Draft Scores in the ",
                            year_range, " ", draft), x = "School", y = "Score") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1), 
               legend.position = "none")

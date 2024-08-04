@@ -74,7 +74,8 @@ draft_scores <- function(years, top_teams, transformation) {
         `colnames<-`(c("school", "score")) %>%
         `rownames<-`(1:nrow(scores_df))
     
-    p <- ggplot(data = scores_df, aes(x = reorder(school, -score), y = score)) +
+    scores_plot <- ggplot(data = scores_df, aes(x = reorder(school, -score), 
+                                                y = score)) +
         geom_col(fill = "purple", color = "gold") +
         geom_text(aes(label = round(score, 4)), color = "gold",
                   position = position_dodge(width = 0.9), angle = 90, 
@@ -84,7 +85,7 @@ draft_scores <- function(years, top_teams, transformation) {
                            year_range, " ", draft), x = "School", y = "Score") +
         theme(axis.text.x = element_text(angle = 45, hjust = 1), 
               legend.position = "none")
-    return(p)
+    return(scores_plot)
 }
 
 scores <- draft_scores(years = "all", top_teams = "all", 

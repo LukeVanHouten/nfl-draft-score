@@ -129,6 +129,7 @@ get_schools <- function(school, years, transformation) {
     school_plot <- ggplot(data = schools_df, aes(x = years,
                                                  y = school_scores)) +
         geom_col(fill = "purple", color = "gold") +
+        geom_smooth(method = "lm", se = FALSE, color = "black") +
         geom_text(aes(label = round(school_scores, 4)), color = "gold",
                   position = position_dodge(width = 0.9), angle = 90,
                   hjust = 1.2, vjust = 0.5) +

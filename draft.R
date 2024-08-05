@@ -1,7 +1,11 @@
 library(tidyverse)
+library(plotly)
 options(dplyr.summarise.inform = FALSE)
 
 draft_df <- read.csv("drafts.csv")
+top_50_df <- read.csv("top_50_seasons_jbp.csv")
+fbs_ranking_df <- read.csv("fbs_ranking_jbp.csv") %>%
+    mutate(jbp_score = (jbp_score / 1000) + 12.6)
 
 log_bias <- exp(1) - 1
 
@@ -110,7 +114,8 @@ get_schools <- function(school, years, transformation) {
 
     year_scores <- as.data.frame(t(sapply(years, function(x) {
         draft_scores(years = x, top_teams = "all", 
-                     transformation = transformation)$plot_env$scores_df})))
+                     transformation = transformation)$plot_env$scores_df
+    })))
     indices <- lapply(year_scores$school, function(y) {
         idx <- which(y == school)
         if (length(idx) == 0) NA else idx
@@ -130,7 +135,8 @@ get_schools <- function(school, years, transformation) {
     school_plot <- ggplot(data = schools_df, aes(x = years,
                                                  y = school_scores)) +
         geom_col(fill = "purple", color = "gold") +
-        geom_smooth(method = "lm", se = FALSE, color = "black") +
+        geom_smooth(method = "lm", formula = y ~ x, se = FALSE, 
+                    color = "black") +
         geom_text(aes(label = round(school_scores, 4)), color = "gold",
                   position = position_dodge(width = 0.9), angle = 90,
                   hjust = 1.2, vjust = 0.5) +
@@ -143,5 +149,44 @@ get_schools <- function(school, years, transformation) {
     return(school_plot)
 }
 
-schools <- get_schools("Washington", "all", "log")
+schools <- get_schools(school = "Washington", years = "all",
+                       transformation = "log")
 schools
+
+drafts_top_50 <- cbind(select(top_50_df, school, jbp_score, Conference), 
+                       t(mapply(function(x, y) {
+    as.vector(get_schools(school = x, years = y, 
+                          transformation = "log")$plot_env$schools_df)
+}, top_50_df$school, top_50_df$year + 1))) %>%
+    mutate(draft_score = round(as.numeric(school_scores), 3), 
+           team = paste(as.numeric(years) - 1, school), 
+           draft = paste(years, "Draft")) %>%
+    select(-school_scores) %>%
+    `rownames<-`(1:nrow(.))
+
+top_50_model <- lm(draft_score ~ jbp_score, drafts_top_50)
+summary(top_50_model)
+
+top_50_plot <- ggplot(data = drafts_top_50, 
+                      aes(x = jbp_score, y = draft_score)) +
+    suppressWarnings(geom_point(aes(text = paste("Team:", team, "<br>Draft:", 
+                                                 draft), color = Conference))) +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black")
+ggplotly(top_50_plot)
+
+drafts_fbs_ranking <- left_join(fbs_ranking_df, draft_scores(
+                                    years = 1984:2023, top_teams = "all", 
+                                    transformation = "log"
+                                )$plot_env$scores_df, by = "school") %>%
+    mutate(draft_score = round(score, 4)) %>%
+    select(-score)
+
+drafts_fbs_model <- lm(draft_score ~ jbp_score, drafts_fbs_ranking)
+summary(drafts_fbs_model)
+
+drafts_fbs_plot <- ggplot(data = drafts_fbs_ranking, 
+                          aes(x = jbp_score, y = draft_score)) +
+    geom_point(aes(group = school)) +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "red") +
+    geom_hline(yintercept = 0, color = "black")
+ggplotly(drafts_fbs_plot)

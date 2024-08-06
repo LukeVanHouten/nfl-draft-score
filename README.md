@@ -26,7 +26,7 @@ Warning: Any duplicate college names were fixed manually in Excel in the drafts.
  - FIU/Florida International
  - FAU/Florida Atlantic
  - UCF/Central Florida
- - Mid. Tennessee St./Middle Tennessee
+ - Middle Tenn. St./Middle Tennessee
 More
 All instances of "State" were replaced with "St."
 

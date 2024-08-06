@@ -4,6 +4,7 @@ WIP project to score each college whose players were drafted across every NFL dr
 
 Warning: Any duplicate college names were fixed manually in Excel in the drafts.csv file using the find and replace tool. Rebuilding this file using data.R will bring back the duplicates. These duplicates are:
 
+ - West. Michigan/Western Michigan
  - East. Michigan/Eastern Michigan
  - West. Illinois/Western Illinois
  - East. Illinois/Eastern Illinois
@@ -16,6 +17,15 @@ Warning: Any duplicate college names were fixed manually in Excel in the drafts.
  - Lenoir Rhyne/Lenoir-Rhyne
  - S.F. Austin/Stephen F. Austin
  - Angelo St./Angelo State (TX)
+ - UTSA/Texas-San Antonio
+ - UTEP/Texas-El Paso
+ - UConn/Connecticut
+ - ULM/La-Monroe
+ - FIU/Florida International
+ - FAU/Florida Atlantic
+ - UCF/Central Florida
+ - Mid. Tennessee St./Middle Tennessee
+More
+All instances of "State" were replaced with "St."
 
-The code to find more similar schools is in `similar names.txt`, but the only problematic ones are the ones listed above.
-
+The code to find more similar schools is in `similar names.txt`, but the only problematic ones are the ones listed above. This code also missed a lot of the duplicates, specifically the ones under Angelo St. in the list above. This is because `agrep()` isn't able to get "Florida International" from "FIU" for example.

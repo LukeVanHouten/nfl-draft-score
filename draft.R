@@ -92,11 +92,12 @@ draft_scores <- function(years, top_teams, transformation) {
     return(scores_plot)
 }
 
-scores <- draft_scores(years = "all", top_teams = "all", 
+scores <- draft_scores(years = "all", top_teams = 50, 
                        transformation = "log")
 scores
 
-draft_scores_df <- scores$plot_env$scores_df
+draft_scores_df <- draft_scores(years = "all", top_teams = "all", 
+                                transformation = "log")$plot_env$scores_df
 
 get_schools <- function(school, years, transformation) {
     if (all(years %in% 1936:2024)) {
@@ -141,6 +142,7 @@ get_schools <- function(school, years, transformation) {
                   position = position_dodge(width = 0.9), angle = 90,
                   hjust = 1.2, vjust = 0.5) +
         scale_x_continuous(breaks = years) + 
+        scale_y_continuous(limits = c(0, 4.5)) + 
         labs(title = paste0(school, "'s ", str_to_title(transformation), 
                             "-Transformed College Draft Scores in the ", 
                             year_range, " ", draft), x = "Years", y = "Score") +
@@ -149,7 +151,7 @@ get_schools <- function(school, years, transformation) {
     return(school_plot)
 }
 
-schools <- get_schools(school = "Washington", years = "all",
+schools <- get_schools(school = "Notre Dame", years = "all",
                        transformation = "log")
 schools
 
@@ -171,7 +173,9 @@ top_50_plot <- ggplot(data = drafts_top_50,
                       aes(x = jbp_score, y = draft_score)) +
     suppressWarnings(geom_point(aes(text = paste("Team:", team, "<br>Draft:", 
                                                  draft), color = Conference))) +
-    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black")
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black") +
+    labs(title = gsub("\\\n", "", "Top 50 College Football Seasons Vs.
+ Log-Transformed Draft Scores"), x = "Season Score", y = "Draft Score")
 ggplotly(top_50_plot)
 
 drafts_fbs_ranking <- left_join(fbs_ranking_df, draft_scores(
@@ -188,5 +192,8 @@ drafts_fbs_plot <- ggplot(data = drafts_fbs_ranking,
                           aes(x = jbp_score, y = draft_score)) +
     geom_point(aes(group = school)) +
     geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "red") +
-    geom_hline(yintercept = 0, color = "black")
+    geom_hline(yintercept = 0, color = "black") +
+    labs(title = "1983-2022 Team Scores Vs. Log-Transformed Draft Scores", 
+         x = "Season Score", y = "Draft Score")
 ggplotly(drafts_fbs_plot)
+    

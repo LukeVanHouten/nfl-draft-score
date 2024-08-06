@@ -27,7 +27,9 @@ Warning: Any duplicate college names were fixed manually in Excel in the drafts.
  - FAU/Florida Atlantic
  - UCF/Central Florida
  - Middle Tenn. St./Middle Tennessee
+
 More
+
 All instances of "State" were replaced with "St."
 
 The code to find more similar schools is in `similar names.txt`, but the only problematic ones are the ones listed above. This code also missed a lot of the duplicates, specifically the ones under Angelo St. in the list above. This is because `agrep()` isn't able to get "Florida International" from "FIU" for example.

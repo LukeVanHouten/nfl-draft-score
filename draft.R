@@ -92,9 +92,7 @@ draft_scores <- function(years, top_teams, transformation) {
     return(scores_plot)
 }
 
-scores <- draft_scores(years = "all", top_teams = 50, 
-                       transformation = "log")
-scores
+
 
 draft_scores_df <- draft_scores(years = "all", top_teams = "all", 
                                 transformation = "log")$plot_env$scores_df
@@ -151,31 +149,42 @@ get_schools <- function(school, years, transformation) {
     return(school_plot)
 }
 
-schools <- get_schools(school = "Notre Dame", years = "all",
+schools <- get_schools(school = "Alabama", years = "all",
                        transformation = "log")
 schools
 
-drafts_top_50 <- cbind(select(top_50_df, school, jbp_score, Conference), 
-                       t(mapply(function(x, y) {
-    as.vector(get_schools(school = x, years = y, 
-                          transformation = "log")$plot_env$schools_df)
-}, top_50_df$school, top_50_df$year + 1))) %>%
-    mutate(draft_score = round(as.numeric(school_scores), 3), 
-           team = paste(as.numeric(years) - 1, school), 
-           draft = paste(years, "Draft")) %>%
-    select(-school_scores) %>%
-    `rownames<-`(1:nrow(.))
+drafts_top_50 <- function(transformation) {
+    if (!(transformation %in% c("reciprocal", "root", "log"))) {
+        return("Transformation must be 'recriprocal', 'root', or 'log'!")
+    } else {
+        return(cbind(select(top_50_df, school, jbp_score, Conference), 
+                            t(mapply(function(x, y) {as.vector(
+                                get_schools(school = x, years = y, 
+                                            transformation = 
+                                            transformation)$plot_env$schools_df
+                                )}, top_50_df$school, top_50_df$year + 1))) %>%
+                   mutate(draft_score = round(as.numeric(school_scores), 3), 
+                          team = paste(as.numeric(years) - 1, school), 
+                          draft = paste(years, "Draft")) %>%
+                   add_column(func = transformation, .before = 1) %>%
+                   select(-school_scores) %>%
+                   `rownames<-`(1:nrow(.)))
+    }
+}
 
-top_50_model <- lm(draft_score ~ jbp_score, drafts_top_50)
+top_drafts_df <- drafts_top_50("root")
+top_50_model <- lm(draft_score ~ jbp_score, top_drafts_df)
 summary(top_50_model)
 
-top_50_plot <- ggplot(data = drafts_top_50, 
+top_50_plot <- ggplot(data = top_drafts_df, 
                       aes(x = jbp_score, y = draft_score)) +
     suppressWarnings(geom_point(aes(text = paste("Team:", team, "<br>Draft:", 
                                                  draft), color = Conference))) +
     geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "black") +
-    labs(title = gsub("\\\n", "", "Top 50 College Football Seasons Vs.
- Log-Transformed Draft Scores"), x = "Season Score", y = "Draft Score")
+    labs(title = paste0("Top 50 College Football Seasons Vs. ", 
+                        str_to_title(top_drafts_df[[1, 1]]), 
+                        "-Transformed Draft Scores"), x = "Season Score", 
+         y = "Draft Score")
 ggplotly(top_50_plot)
 
 drafts_fbs_ranking <- left_join(fbs_ranking_df, draft_scores(

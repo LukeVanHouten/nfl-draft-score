@@ -92,7 +92,9 @@ draft_scores <- function(years, top_teams, transformation) {
     return(scores_plot)
 }
 
-
+scores <- draft_scores(years = "all", top_teams = 50, 
+                       transformation = "log")
+scores
 
 draft_scores_df <- draft_scores(years = "all", top_teams = "all", 
                                 transformation = "log")$plot_env$scores_df
@@ -149,7 +151,7 @@ get_schools <- function(school, years, transformation) {
     return(school_plot)
 }
 
-schools <- get_schools(school = "Alabama", years = "all",
+schools <- get_schools(school = "Clemson", years = 2012:2021,
                        transformation = "log")
 schools
 
@@ -172,7 +174,7 @@ drafts_top_50 <- function(transformation) {
     }
 }
 
-top_drafts_df <- drafts_top_50("root")
+top_drafts_df <- drafts_top_50("log")
 top_50_model <- lm(draft_score ~ jbp_score, top_drafts_df)
 summary(top_50_model)
 
@@ -187,22 +189,27 @@ top_50_plot <- ggplot(data = top_drafts_df,
          y = "Draft Score")
 ggplotly(top_50_plot)
 
-drafts_fbs_ranking <- left_join(fbs_ranking_df, draft_scores(
-                                    years = 1984:2023, top_teams = "all", 
-                                    transformation = "log"
-                                )$plot_env$scores_df, by = "school") %>%
-    mutate(draft_score = round(score, 4)) %>%
-    select(-score)
+drafts_fbs_ranking <- function(transformation) {
+    return(left_join(fbs_ranking_df, draft_scores(
+                        years = 1984:2023, top_teams = "all", 
+                        transformation = transformation
+                     )$plot_env$scores_df, by = "school") %>%
+               mutate(draft_score = round(score, 4)) %>%
+               add_column(func = transformation, .before = 1) %>%
+               select(-score))
+}
 
-drafts_fbs_model <- lm(draft_score ~ jbp_score, drafts_fbs_ranking)
+fbs_ranking_df <- drafts_fbs_ranking("log")
+drafts_fbs_model <- lm(draft_score ~ jbp_score, fbs_ranking_df)
 summary(drafts_fbs_model)
 
-drafts_fbs_plot <- ggplot(data = drafts_fbs_ranking, 
+drafts_fbs_plot <- ggplot(data = fbs_ranking_df, 
                           aes(x = jbp_score, y = draft_score)) +
     geom_point(aes(group = school)) +
     geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = "red") +
     geom_hline(yintercept = 0, color = "black") +
-    labs(title = "1983-2022 Team Scores Vs. Log-Transformed Draft Scores", 
-         x = "Season Score", y = "Draft Score")
+    labs(title = paste0("1983-2022 Team Scores Vs. ", 
+                        str_to_title(fbs_ranking_df[[1, 1]]), 
+                        "-Transformed Draft Scores"), x = "Team Score", 
+         y = "Draft Score")
 ggplotly(drafts_fbs_plot)
-    

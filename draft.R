@@ -151,7 +151,7 @@ get_schools <- function(school, years, transformation) {
     return(school_plot)
 }
 
-schools <- get_schools(school = "Clemson", years = 2012:2021,
+schools <- get_schools(school = "Alabama", years = 2008:2024,
                        transformation = "log")
 schools
 
@@ -174,7 +174,7 @@ drafts_top_50 <- function(transformation) {
     }
 }
 
-top_drafts_df <- drafts_top_50("log")
+top_drafts_df <- drafts_top_50("root")
 top_50_model <- lm(draft_score ~ jbp_score, top_drafts_df)
 summary(top_50_model)
 

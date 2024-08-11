@@ -6,6 +6,8 @@ https://www.reddit.com/r/CFB/comments/1616dry/ranking_the_top_131_fbs_programs_o
 
 In order to get these graphs locally, just download `draft.R`, `drafts.csv`, and both .csv files containing "jbp" in the filename. Then just run the script in RStudio, and adjust the function values to your liking.
 
+Medium article: https://medium.com/@lukevh/scoring-college-football-teams-by-how-well-they-did-in-the-nfl-draft-a0d7c065dbfe
+
 Warning: Any duplicate college names were fixed manually in Excel in the drafts.csv file using the find and replace tool. Rebuilding this file using data.R will bring back the duplicates. These duplicates are:
 
  - West. Michigan/Western Michigan
